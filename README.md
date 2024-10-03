@@ -1,6 +1,17 @@
 # MultiQuerySuperpositionAttention
 Multi-Query Attention with Sub-linear Masking, Superposition, and Entanglement
 
+Multi-Query Attention (MQA) is a variant of traditional multi-head attention where multiple queries share the same key and value projections, which reduces memory and computation costs while maintaining the effectiveness of multi-head attention. To enhance MQA with sub-linear scaling properties, superposition, entanglement, and sub-linear masking, we can implement these advanced features while ensuring the design is production-grade with clean code, documentation, and logging using `loguru`.
+
+### Multi-Query Attention with Sub-linear Masking, Superposition, and Entanglement
+
+The approach:
+1. **Multi-Query Attention (MQA)**: We maintain separate query heads but share the same keys and values.
+2. **Sub-Linear Masking**: Masking applied at sub-linear complexity to control attention over specific tokens while reducing computational overhead.
+3. **Superposition**: Approximation through averaging of input states to reduce complexity while retaining signal integrity.
+4. **Entanglement**: Introduce cross-token correlations through a learnable matrix, making specific tokens influence each other.
+
+### Code Implementation
 
 ```python
 import torch
@@ -134,3 +145,33 @@ def run_benchmark_demo():
 if __name__ == "__main__":
     run_benchmark_demo()
 ```
+
+### Key Features of This Implementation:
+
+1. **Multi-Query Attention**:
+   - We maintain multiple query heads but share the key and value projections. This reduces memory usage and computational overhead without sacrificing attention effectiveness.
+  
+2. **Sub-Linear Masking**:
+   - Sub-linear masking is applied to allow approximate masking without full computation, making it more efficient. This is useful in cases where part of the sequence should be ignored (e.g., padding tokens).
+
+3. **Superposition**:
+   - We approximate the superposition of key and value vectors by averaging them across the sequence. This reduces the dimensionality of interaction and computation while retaining enough signal integrity for effective attention.
+
+4. **Entanglement**:
+   - We use a learnable entanglement matrix to introduce cross-token correlations. The query vectors are multiplied by this matrix, creating token-level entanglement that allows stronger interactions between specific tokens.
+
+5. **Production-Grade Features**:
+   - **Efficiency**: The model uses shared key/value projections for reduced memory use and faster computation.
+   - **Logging**: Extensive logging with `loguru` to track input/output shapes, masking application, and the status of the attention weights.
+   - **Sub-linear Scaling**: Operations like superposition and sub-linear masking ensure that the attention mechanism scales more efficiently with longer sequences.
+
+### Usage:
+1. **Sub-linear Masking**: This mechanism supports efficient masking to ignore irrelevant tokens, reducing computation for large sequences.
+2. **Production Efficiency**: The multi-query design, coupled with superposition and entanglement, makes this approach ideal for high-efficiency tasks.
+3. **Scalability**: By using shared key and value projections, the memory and time complexity of attention is reduced, making it better suited for large-scale or production environments.
+
+### Next Steps:
+- **Testing**: You can plug this model into the benchmark from the previous step to test its scaling properties.
+- **Further Optimization**: Explore GPU optimizations and custom CUDA kernels for even more efficient handling of large sequences and sparse data.
+
+Let me know if you'd like further modifications or additional features!
