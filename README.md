@@ -86,7 +86,10 @@ class MultiQuerySuperpositionAttention(nn.Module):
         # Step 3: Superposition - Approximate superposition by averaging key/value vectors
         superposed_k = torch.mean(k, dim=1, keepdim=True)  # Approximate superposition across sequence
         superposed_v = torch.mean(v, dim=1, keepdim=True)  # Approximate superposition across sequence
-        
+        # Use `repeat` instead of `expand` to match the correct dimensions
+        superposed_v = superposed_v.repeat(1, seq_len, 1)  # Repeat across the sequence length
+        superposed_v = superposed_v.unsqueeze(1).repeat(1, self.num_heads, 1, 1)  # Add heads dimension
+
         # Step 4: Entanglement - Apply learnable entanglement matrix
         entangled_q = torch.einsum('bhqd,hdd->bhqd', q, self.entanglement_matrix)  # Q x Entanglement matrix
 
